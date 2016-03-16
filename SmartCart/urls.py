@@ -21,11 +21,14 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
 from rest_framework.routers import DefaultRouter
-# from account.views import UserViewSet, UserLanguageViewSet, AccountViewSet
+from order.views import VendorViewSet, SKUViewSet, ItemViewSet, OrderViewSet
 
 router = DefaultRouter()
 
-# router.register('user_profile', UserViewSet, base_name='user_profile')
+router.register('vendor', VendorViewSet, base_name='vendor')
+router.register('sku', SKUViewSet, base_name='sku')
+router.register('order', OrderViewSet, base_name='order')
+router.register('item', ItemViewSet, base_name='item')
 
 urlpatterns = [
     url(r'^admin/', admin.site.urls),
