@@ -4,16 +4,26 @@ from django.db import models
 class Vendor(models.Model):
     name = models.CharField(max_length=64)
 
+    def __str__(self):
+        return self.name
+
 
 class SKU(models.Model):
     title = models.CharField(max_length=64)
     weight = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
 
+    def __str__(self):
+        return self.title
+
 
 class Order(models.Model):
     username = models.CharField(max_length=64)
     shop = models.ForeignKey(Vendor, related_name='order_vendor')
+    created = models.DateTimeField(auto_now_add=True)
+
+    def __str__(self):
+        return str(self.username) + " " + str(self.created)
 
 
 class Item(models.Model):

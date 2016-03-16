@@ -25,3 +25,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
     class Meta:
         model = Item
+
+
+class WeightSerializer(serializers.Serializer):
+    weight = serializers.FloatField(default=0.0)
