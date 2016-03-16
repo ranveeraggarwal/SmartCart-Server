@@ -132,5 +132,5 @@ Temporary Items
 .apdisk
 
 SmartCart/settings_user.py
-
+db.sqlite3
 
