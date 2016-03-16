@@ -7,10 +7,13 @@ class SKU(models.Model):
     price = models.FloatField(default=0.0)
 
 
+class Order(models.Model):
+    username = models.CharField(max_length=64)
+
+
 class Item(models.Model):
     sku = models.ForeignKey(SKU, related_name='item_sku')
     quantity = models.IntegerField()
+    order = models.ForeignKey(Order, related_name='item_order')
 
 
-class Order(models.Model):
-    items = models.ManyToManyField(Item, related_name='order_item', blank=True)
