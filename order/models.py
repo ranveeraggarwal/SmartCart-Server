@@ -13,6 +13,7 @@ class SKU(models.Model):
 
 class Order(models.Model):
     username = models.CharField(max_length=64)
+    shop = models.ForeignKey(Vendor, related_name='order_vendor')
 
 
 class Item(models.Model):
