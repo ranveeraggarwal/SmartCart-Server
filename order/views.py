@@ -35,3 +35,22 @@ class OrderViewSet(viewsets.ModelViewSet):
             weight = weight + item.sku.weight*item.quantity
         return Response({'weight': weight})
 
+    @detail_route(methods=['POST'])
+    def verify_weight(self, request, pk):
+        """
+        Verify Weight
+        ---
+        request_serializer: WeightSerializer
+        """
+        order = self.get_object()
+        serialized_data = WeightSerializer(data=request.data)
+        if serialized_data.is_valid():
+            order.cart_weight = serialized_data.validated_data['weight']
+        items = order.item_order.all()
+        weight = 0
+        for item in items:
+            weight = weight + item.sku.weight*item.quantity
+        if order.cart_weight == weight:
+            return Response({'equal': True})
+        else:
+            return Response({'equal': False})
