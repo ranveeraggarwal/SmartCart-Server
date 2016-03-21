@@ -15,7 +15,7 @@ class SKUAdmin(admin.ModelAdmin):
 
 @admin.register(Order)
 class OrderAdmin(admin.ModelAdmin):
-    list_display = ['id', 'username', 'shop', 'cart_weight']
+    list_display = ['id', 'shop', 'cart_weight']
 
 
 @admin.register(Item)

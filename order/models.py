@@ -18,7 +18,6 @@ class SKU(models.Model):
 
 
 class Order(models.Model):
-    username = models.CharField(max_length=64)
     shop = models.ForeignKey(Vendor, related_name='order_vendor')
     created = models.DateTimeField(auto_now_add=True)
     cart_weight = models.FloatField(default=0.0)
