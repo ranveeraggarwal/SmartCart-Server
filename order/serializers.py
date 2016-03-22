@@ -22,7 +22,7 @@ class OrderSerializer(serializers.ModelSerializer):
 
 
 class ItemSerializer(serializers.ModelSerializer):
-
+    sku = SKUSerializer(read_only=True)
     class Meta:
         model = Item
 
