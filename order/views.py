@@ -23,7 +23,7 @@ class ItemViewSet(viewsets.ModelViewSet):
     queryset = Item.objects.all()
 
 
-class OrderViewSet(viewsets.ModelViewSet):
+class OrderViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = OrderSerializer
     queryset = Order.objects.all()
 
@@ -55,6 +55,8 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({'equal': True})
         else:
             return Response({'equal': False})
+
+    #@detail_route()
 
 
 def make_order(request, vendor_id):
