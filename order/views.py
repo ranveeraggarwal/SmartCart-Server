@@ -55,18 +55,6 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             weight = weight + item.sku.weight*item.quantity
         return Response({'weight': weight})
 
-    @detail_route()
-    def get_items(self, request, pk):
-        """
-        Get items of an order id
-        ---
-        response_serializer: ItemSerializer
-        """
-        order = get_object_or_404(Order, pk=pk)
-        order_items = order.item_order.all()
-        items = ItemSerializer(order_items, many=True, context={'request': request})
-        return Response({'items': items.data})
-
 
 def make_order(request, vendor_id):
     vendor = Vendor.objects.all().filter(id=vendor_id)
