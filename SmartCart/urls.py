@@ -21,6 +21,8 @@ from django.conf.urls import url, include
 from django.contrib import admin
 from django.views.static import serve
 from rest_framework.routers import DefaultRouter
+
+from SmartCart.views import index
 from order.views import VendorViewSet, SKUViewSet, ItemViewSet, OrderViewSet
 
 router = DefaultRouter()
@@ -35,6 +37,7 @@ urlpatterns = [
     url(r'^api/', include(router.urls)),
     url(r'^api-docs/', include(rest_framework_swagger.urls, namespace='api-docs')),
     url(r'^order/', include('order.urls')),
+    url(r'^', index, name='index'),
 ]
 
 # Fail safe! If nginx is down, this might come handy.

@@ -36,27 +36,6 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
             weight = weight + item.sku.weight*item.quantity
         return Response({'weight': weight})
 
-    @detail_route(methods=['POST'])
-    def verify_weight(self, request):  # TODO: make it into url, send 1 or 0 in brackets
-        """
-        Verify Weight
-        ---
-        request_serializer: WeightSerializer
-        """
-        order = self.get_object()
-        serialized_data = WeightSerializer(data=request.data)
-        if serialized_data.is_valid():
-            order.cart_weight = serialized_data.validated_data['weight']
-            order.save()
-        items = order.item_order.all()
-        weight = 0
-        for item in items:
-            weight = weight + item.sku.weight*item.quantity
-        if order.cart_weight == weight:
-            return Response({'equal': True})
-        else:
-            return Response({'equal': False})
-
     @detail_route()
     def get_items(self, request, pk):
         """
@@ -81,14 +60,13 @@ def make_order(request, vendor_id):
     else:
         return HttpResponse('{-1}')
 
-# TODO: add TIVA api, order/add_item/oid/rf_id
-
 # TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
 
 
 def add_item(request, order_id, rf_id):
     order = Order.objects.all().filter(id=order_id)
-    if order.exists():
+    if len(order) > 0:
+        order = order[0]
         sku = SKU.objects.all().filter(rf_id=rf_id)
         if len(sku) == 0:
             return HttpResponse('{-1}')
@@ -108,3 +86,21 @@ def add_item(request, order_id, rf_id):
             return HttpResponse('{' + str(order_id) + ' ' + str(item.id) + ' ' + str(item.quantity) + '}')
     else:
         return HttpResponse('{-1}')
+
+
+def verify_weight(request, order_id, cart_weight):
+        order = Order.objects.all().filter(id=order_id)
+        if len(order) == 0:
+            return HttpResponse('{-1}')
+        order = order[0]
+        order.cart_weight = cart_weight
+        order.save()
+        items = order.item_order.all()
+        weight = 0
+        for item in items:
+            weight = weight + item.sku.weight*item.quantity
+        print(weight)
+        if int(cart_weight) == int(weight):
+            return HttpResponse('{1}')
+        else:
+            return HttpResponse('{0}')

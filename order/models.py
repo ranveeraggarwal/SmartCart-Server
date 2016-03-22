@@ -23,9 +23,6 @@ class Order(models.Model):
     created = models.DateTimeField(auto_now_add=True)
     cart_weight = models.FloatField(default=0.0)
 
-    def __str__(self):
-        return str(self.username) + " " + str(self.created)
-
 
 class Item(models.Model):
     sku = models.ForeignKey(SKU, related_name='item_sku')
