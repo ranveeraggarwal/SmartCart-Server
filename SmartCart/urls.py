@@ -34,6 +34,7 @@ urlpatterns = [
     url(r'^admin/', admin.site.urls),
     url(r'^api/', include(router.urls)),
     url(r'^api-docs/', include(rest_framework_swagger.urls, namespace='api-docs')),
+    url(r'^order/', include('order.urls')),
 ]
 
 # Fail safe! If nginx is down, this might come handy.

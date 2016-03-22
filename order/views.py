@@ -1,4 +1,5 @@
-from django.shortcuts import get_object_or_404
+from django.http import HttpResponse
+from django.shortcuts import get_object_or_404, redirect
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
@@ -54,3 +55,15 @@ class OrderViewSet(viewsets.ModelViewSet):
             return Response({'equal': True})
         else:
             return Response({'equal': False})
+
+
+def make_order(request, vendor_id):
+    vendor = Vendor.objects.all().filter(id=vendor_id)
+    if vendor.exists():
+        order = Order(
+            shop=vendor[0]
+        )
+        order.save()
+        return HttpResponse(order.id)
+    else:
+        return HttpResponse(-1)
