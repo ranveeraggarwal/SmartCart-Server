@@ -64,6 +64,6 @@ def make_order(request, vendor_id):
             shop=vendor[0]
         )
         order.save()
-        return HttpResponse(order.id)
+        return HttpResponse('{'+str(order.id)+'}')
     else:
-        return HttpResponse(-1)
+        return HttpResponse('{-1}')
