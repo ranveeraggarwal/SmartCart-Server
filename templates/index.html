@@ -8,24 +8,24 @@
         <h1>Welcome to SmartCart Web Interface</h1>
         <hr>
         <h2>Android APIs</h2>
-        <p>For Android APIs, visit <a href="http://smartcart.thecodershub.com/api-docs">this page.</a></p>
+        <p>For Android APIs, visit <a href="http://smartcart.thecodershub.com/api-docs/">this page.</a></p>
         <hr>
         <h2>TIVA APIs</h2>
         <p>Following are the TIVA APIs:</p>
         <p>
             <ul>
                 <li>
-                    Start an Order: http://smartcart.thecodershub.com/order/make_order/&lt;vendor_id&gt;
+                    Start an Order: http://smartcart.thecodershub.com/order/make_order/&lt;vendor_id&gt;/
                     <br>
                     Returns {&lt;order_id&gt;}.
                 </li>
                 <li>
-                    Add an item: http://smartcart.thecodershub.com/order/add_item/&lt;order_id&gt;/&lt;item_rf_id&gt;
+                    Add an item: http://smartcart.thecodershub.com/order/add_item/&lt;order_id&gt;/&lt;item_rf_id&gt;/
                     <br>
-                    Returns {&lt;order_id&gt; &lt;item_id&gt; &lt;item_quantity&gt;}.
+                    Returns {&lt;item_name&gt; &lt;item_price&gt; &lt;item_quantity&gt;}.
                 </li>
                 <li>
-                    Verify weight: http://smartcart.thecodershub.com/order/verify_weight/&lt;order_id&gt;/&lt;weight&gt;
+                    Verify weight: http://smartcart.thecodershub.com/order/verify_weight/&lt;order_id&gt;/&lt;weight&gt;/
                     <br>
                     Set cart_weight to &lt;weight&gt; and returns {1} if it matches the sum, {0} otherwise.
                 </li>
