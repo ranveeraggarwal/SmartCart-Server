@@ -17,6 +17,7 @@ class SKUSerializer(serializers.ModelSerializer):
 
 class OrderSerializer(serializers.ModelSerializer):
     items = serializers.SerializerMethodField()
+    shop = VendorSerializer(read_only=True)
 
     @staticmethod
     def get_items(order: Order):
