@@ -8,7 +8,7 @@ class Vendor(models.Model):
         return self.name
 
 
-class SKU(models.Model):
+class SKU(models.Model):  # TODO: add rfid
     title = models.CharField(max_length=64)
     weight = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)

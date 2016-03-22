@@ -37,7 +37,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'weight': weight})
 
     @detail_route(methods=['POST'])
-    def verify_weight(self, request, pk):
+    def verify_weight(self, request):  # TODO: make it into url, send 1 or 0 in brackets
         """
         Verify Weight
         ---
@@ -47,6 +47,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         serialized_data = WeightSerializer(data=request.data)
         if serialized_data.is_valid():
             order.cart_weight = serialized_data.validated_data['weight']
+            order.save()
         items = order.item_order.all()
         weight = 0
         for item in items:
@@ -77,5 +78,33 @@ def make_order(request, vendor_id):
         )
         order.save()
         return HttpResponse('{'+str(order.id)+'}')
+    else:
+        return HttpResponse('{-1}')
+
+# TODO: add TIVA api, order/add_item/oid/rf_id
+
+# TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
+
+
+def add_item(request, order_id, rf_id):
+    order = Order.objects.all().filter(id=order_id)
+    if order.exists():
+        sku = SKU.objects.all().filter(rf_id=rf_id)
+        if len(sku) == 0:
+            return HttpResponse('{-1}')
+        sku = sku[0]
+        item = Item.objects.all().filter(order=order, sku=sku)
+        if len(item) > 0:
+            item[0].quantity += 1
+            item[0].save()
+            return HttpResponse('{' + str(order_id) + ' ' + str(item[0].id) + ' ' + str(item[0].quantity) + '}')
+        else:
+            item = Item(
+                sku=sku,
+                quantity=1,
+                order=order,
+            )
+            item.save()
+            return HttpResponse('{' + str(order_id) + ' ' + str(item.id) + ' ' + str(item.quantity) + '}')
     else:
         return HttpResponse('{-1}')
