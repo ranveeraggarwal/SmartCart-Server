@@ -29,3 +29,7 @@ class ItemSerializer(serializers.ModelSerializer):
 
 class WeightSerializer(serializers.Serializer):
     weight = serializers.FloatField(default=0.0)
+
+
+class ChangeItemSerializer(serializers.Serializer):
+    quantity = serializers.IntegerField()

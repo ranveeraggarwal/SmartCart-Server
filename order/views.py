@@ -1,11 +1,12 @@
 from django.http import HttpResponse
-from django.shortcuts import get_object_or_404, redirect
+from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
+from rest_framework.status import HTTP_400_BAD_REQUEST
 
 from order.models import Vendor, SKU, Item, Order
-from order.serializers import VendorSerializer, SKUSerializer, ItemSerializer, OrderSerializer, WeightSerializer
+from order.serializers import VendorSerializer, SKUSerializer, ItemSerializer, OrderSerializer, ChangeItemSerializer
 
 
 class VendorViewSet(viewsets.ReadOnlyModelViewSet):
@@ -18,9 +19,27 @@ class SKUViewSet(viewsets.ReadOnlyModelViewSet):
     queryset = SKU.objects.all()
 
 
-class ItemViewSet(viewsets.ModelViewSet):
+class ItemViewSet(viewsets.ReadOnlyModelViewSet):
     serializer_class = ItemSerializer
     queryset = Item.objects.all()
+
+    @detail_route(methods=['POST'])
+    def update_item(self, request, pk):
+        serialized_data = ChangeItemSerializer(data=request.data)
+        item = self.get_object()
+        if serialized_data.is_valid():
+            if serialized_data.validated_data['quantity'] == 0:
+                item.delete()
+                return Response({'delete': 'success'})
+            else:
+                try:
+                    item.quantity = serialized_data.validated_data['quantity']
+                except KeyError:
+                    pass
+                item.save()
+                return Response(ItemSerializer(item).data)
+        else:
+            return Response(serialized_data.errors, status=HTTP_400_BAD_REQUEST)
 
 
 class OrderViewSet(viewsets.ReadOnlyModelViewSet):
