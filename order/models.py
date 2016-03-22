@@ -13,6 +13,7 @@ class SKU(models.Model):  # TODO: add rfid
     weight = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
     rf_id = models.IntegerField()
+    picture = models.ImageField(blank=None, null=None, default='')
 
     def __str__(self):
         return self.title
@@ -28,5 +29,3 @@ class Item(models.Model):
     sku = models.ForeignKey(SKU, related_name='item_sku')
     quantity = models.IntegerField()
     order = models.ForeignKey(Order, related_name='item_order')
-
-

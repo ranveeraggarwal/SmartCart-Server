@@ -10,7 +10,7 @@ class VendorAdmin(admin.ModelAdmin):
 
 @admin.register(SKU)
 class SKUAdmin(admin.ModelAdmin):
-    list_display = ['id', 'title', 'weight', 'price', 'rf_id']
+    list_display = ['id', 'title', 'weight', 'price', 'rf_id', 'picture']
 
 
 @admin.register(Order)
