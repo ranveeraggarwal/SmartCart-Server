@@ -73,9 +73,9 @@ def add_item(request, order_id, rf_id):
         sku = sku[0]
         item = Item.objects.all().filter(order=order, sku=sku)
         if len(item) > 0:
-            item[0].quantity += 1
-            item[0].save()
-            return HttpResponse('{' + str(sku.title) + ' ' + str(sku.price) + ' ' + str(item[0].quantity) + '}')
+            item = item[0]
+            item.quantity += 1
+            item.save()
         else:
             item = Item(
                 sku=sku,
@@ -83,7 +83,7 @@ def add_item(request, order_id, rf_id):
                 order=order,
             )
             item.save()
-            return HttpResponse('{' + str(sku.title) + ' ' + str(sku.price) + ' ' + str(item.quantity) + '}')
+        return HttpResponse('{' + str(sku.title) + ' Rs. ' + str(sku.price) + '/-}')
     else:
         return HttpResponse('{-1}')
 
