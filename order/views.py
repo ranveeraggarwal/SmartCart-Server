@@ -4,7 +4,7 @@ from rest_framework import viewsets
 from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 
-from order.models import Vendor, SKU, Item, Order
+from order.models import Vendor, SKU, Item, Order, Chip
 from order.serializers import VendorSerializer, SKUSerializer, ItemSerializer, OrderSerializer, WeightSerializer
 
 
@@ -49,11 +49,11 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         return Response({'items': items.data})
 
 
-def make_order(request, vendor_id):
-    vendor = Vendor.objects.all().filter(id=vendor_id)
-    if vendor.exists():
+def make_order(request, chip):
+    chip = Chip.objects.all().filter(tag=chip)
+    if chip.exists():
         order = Order(
-            shop=vendor[0]
+            chip=chip[0]
         )
         order.save()
         return HttpResponse('{'+str(order.id)+'}')
@@ -62,12 +62,11 @@ def make_order(request, vendor_id):
 
 # TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
 
-
-def add_item(request, order_id, rf_id):
-    order = Order.objects.all().filter(id=order_id)
+def add_item(request, chip_id, rf_id):
+    order = Order.objects.all().filter(chip=chip_id).order_by('-created')
     if len(order) > 0:
         order = order[0]
-        sku = SKU.objects.all().filter(rf_id=rf_id)
+        sku = SKU.objects.all().filter(rfid=rf_id)
         if len(sku) == 0:
             return HttpResponse('{-1}')
         sku = sku[0]
@@ -83,13 +82,13 @@ def add_item(request, order_id, rf_id):
                 order=order,
             )
             item.save()
-        return HttpResponse('{' + str(sku.title) + ' Rs. ' + str(sku.price) + '/-}')
+        return HttpResponse('{' + str(sku.title) + ' Rs.' + str(sku.price) + '/-}')
     else:
         return HttpResponse('{-1}')
 
 
-def verify_weight(request, order_id, cart_weight):
-        order = Order.objects.all().filter(id=order_id)
+def verify_weight(request, chip_id, cart_weight):
+        order = Order.objects.all().filter(chip=chip_id).order_by('-created')
         if len(order) == 0:
             return HttpResponse('{-1}')
         order = order[0]

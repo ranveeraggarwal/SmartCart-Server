@@ -7,20 +7,25 @@ class Vendor(models.Model):
     def __str__(self):
         return self.name
 
+class Chip(models.Model):
+    tag = models.CharField(max_length=64, blank=None, null=None, default='')
+    shop = models.ForeignKey(Vendor, related_name='chip_vendor')
+
+    def __str__(self):
+        return self.tag
 
 class SKU(models.Model):  # TODO: add rfid
     title = models.CharField(max_length=64)
     weight = models.FloatField(default=0.0)
     price = models.FloatField(default=0.0)
-    rf_id = models.IntegerField()
+    rfid = models.CharField(max_length=64, blank=None, null=None, default='')
     picture = models.ImageField(blank=None, null=None, default='')
 
     def __str__(self):
         return self.title
 
-
 class Order(models.Model):
-    shop = models.ForeignKey(Vendor, related_name='order_vendor')
+    chip = models.ForeignKey(Chip, related_name='order_chip')
     created = models.DateTimeField(auto_now_add=True)
     cart_weight = models.FloatField(default=0.0)
 
