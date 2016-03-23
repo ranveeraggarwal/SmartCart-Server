@@ -70,9 +70,13 @@ def make_order(request, chip_id):
         if len(old_order) >= 0:
             order = old_order[0]
             order_id = order.id
-            t = datetime.datetime.now().timestamp() - order.created.timestamp()
+
+            now_ts = datetime.datetime.now().timestamp()
+            create_ts = order.created.timestamp()
+            t = now_ts - create_ts
             if t < 5 * 60:
                 save_new = False
+                order.created = datetime.datetime.now()
                 order.save()
 
         if save_new:
@@ -90,6 +94,7 @@ def add_item(request, chip_id, rf_id):
     order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
     if len(order) > 0:
         order = order[0]
+        order.created = datetime.datetime.now()
         order.save()
         sku = SKU.objects.all().filter(rfid=rf_id)
         if len(sku) == 0:
@@ -118,6 +123,7 @@ def verify_weight(request, chip_id, cart_weight):
         return HttpResponse('{-1}')
     order = order[0]
     order.cart_weight = cart_weight
+    order.created = datetime.datetime.now()
     order.save()
     items = order.item_order.all()
     weight = 0
