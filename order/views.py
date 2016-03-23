@@ -73,6 +73,7 @@ def make_order(request, chip_id):
             t = datetime.datetime.now().timestamp() - order.created.timestamp()
             if t < 5 * 60:
                 save_new = False
+                old_order.save()
 
         if save_new:
             new_order.save()
@@ -89,6 +90,7 @@ def add_item(request, chip_id, rf_id):
     order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
     if len(order) > 0:
         order = order[0]
+        order.save()
         sku = SKU.objects.all().filter(rfid=rf_id)
         if len(sku) == 0:
             return HttpResponse('{-1}')
