@@ -66,7 +66,7 @@ def make_order(request, chip):
 
         return HttpResponse('{ "order" : ' + str(order.id) + '}')
     else:
-        return HttpResponse('{-1}')
+        return HttpResponse('{ "order" : -1 }')
 
 # TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
 
