@@ -1,5 +1,13 @@
 from django.db import models
 
+class OrderStatusOptions:
+    PENDING = 0
+    COMPLETED = 1
+    CANCELLED = 2
+
+    @classmethod
+    def get_dict(cls):
+        return [(cls.PENDING, "Pending"), (cls.COMPLETED, "Completed"), (cls.CANCELLED, "Cancelled")]
 
 class Vendor(models.Model):
     name = models.CharField(max_length=64)
@@ -28,6 +36,7 @@ class Order(models.Model):
     chip = models.ForeignKey(Chip, related_name='order_chip', blank=True, null=True, default='')
     created = models.DateTimeField(auto_now_add=True)
     cart_weight = models.FloatField(default=0.0)
+    status = models.IntegerField(choices=OrderStatusOptions.get_dict(), default=OrderStatusOptions.PENDING)
 
     def __str__(self):
         return str(self.pk)

@@ -7,7 +7,7 @@ from rest_framework.decorators import detail_route
 from rest_framework.response import Response
 from rest_framework.status import HTTP_400_BAD_REQUEST
 
-from order.models import Vendor, SKU, Item, Order, Chip
+from order.models import Vendor, SKU, Item, Order, Chip, OrderStatusOptions
 from order.serializers import VendorSerializer, SKUSerializer, ItemSerializer, OrderSerializer, ChangeItemSerializer
 
 
@@ -56,6 +56,22 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         for item in items:
             weight = weight + item.sku.weight * item.quantity
         return Response({'weight': weight})
+
+    @detail_route()
+    def set_completed(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.status = OrderStatusOptions.COMPLETED
+        order.save()
+
+        return Response({'success': True})
+
+    @detail_route()
+    def set_cancelled(self, request, pk):
+        order = get_object_or_404(Order, pk=pk)
+        order.status = OrderStatusOptions.CANCELLED
+        order.save()
+
+        return Response({'success': True})
 
 
 def make_order(request, chip_id):
