@@ -77,7 +77,7 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 def make_order(request, chip_id):
     chip = Chip.objects.all().filter(tag=chip_id)
     if chip.exists():
-        old_order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
+        old_order = Order.objects.all().filter(chip__tag=chip_id, status=OrderStatusOptions.PENDING).order_by('-created')
         new_order = Order(
                 chip=chip[0]
         )
