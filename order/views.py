@@ -63,14 +63,15 @@ def make_order(request, chip):
             chip=chip[0]
         )
         order.save()
-        return HttpResponse('{'+str(order.id)+'}')
+
+        return HttpResponse('{ "order" : ' + str(order.id) + '}')
     else:
         return HttpResponse('{-1}')
 
 # TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
 
 def add_item(request, chip_id, rf_id):
-    order = Order.objects.all().filter(chip=chip_id).order_by('-created')
+    order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
     if len(order) > 0:
         order = order[0]
         sku = SKU.objects.all().filter(rfid=rf_id)
