@@ -1,3 +1,5 @@
+import datetime
+
 from django.http import HttpResponse
 from django.shortcuts import get_object_or_404
 from rest_framework import viewsets
@@ -52,21 +54,34 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
         items = order.item_order.all()
         weight = 0
         for item in items:
-            weight = weight + item.sku.weight*item.quantity
+            weight = weight + item.sku.weight * item.quantity
         return Response({'weight': weight})
 
 
-def make_order(request, chip):
-    chip = Chip.objects.all().filter(tag=chip)
+def make_order(request, chip_id):
+    chip = Chip.objects.all().filter(tag=chip_id)
     if chip.exists():
-        order = Order(
-            chip=chip[0]
+        old_order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
+        new_order = Order(
+                chip=chip[0]
         )
-        order.save()
 
-        return HttpResponse('{ "order" : ' + str(order.id) + '}')
+        save_new = True
+        if len(old_order) >= 0:
+            order = old_order[0]
+            order_id = order.id
+            t = datetime.datetime.now().timestamp() - order.created.timestamp()
+            if t < 5 * 60:
+                save_new = False
+
+        if save_new:
+            new_order.save()
+            order_id = new_order.id
+
+        return HttpResponse('{ "order" : ' + str(order_id) + '}')
     else:
         return HttpResponse('{ "order" : -1 }')
+
 
 # TODO: Android api: change item: order_id, item_id, qty, if qty 0, remove
 
@@ -85,9 +100,9 @@ def add_item(request, chip_id, rf_id):
             item.save()
         else:
             item = Item(
-                sku=sku,
-                quantity=1,
-                order=order,
+                    sku=sku,
+                    quantity=1,
+                    order=order,
             )
             item.save()
         return HttpResponse('{' + str(sku.title) + ' Rs.' + str(sku.price) + '/-}')
@@ -96,18 +111,18 @@ def add_item(request, chip_id, rf_id):
 
 
 def verify_weight(request, chip_id, cart_weight):
-        order = Order.objects.all().filter(chip=chip_id).order_by('-created')
-        if len(order) == 0:
-            return HttpResponse('{-1}')
-        order = order[0]
-        order.cart_weight = cart_weight
-        order.save()
-        items = order.item_order.all()
-        weight = 0
-        for item in items:
-            weight = weight + item.sku.weight*item.quantity
-        print(weight)
-        if int(cart_weight) == int(weight):
-            return HttpResponse('{1}')
-        else:
-            return HttpResponse('{0}')
+    order = Order.objects.all().filter(chip=chip_id).order_by('-created')
+    if len(order) == 0:
+        return HttpResponse('{-1}')
+    order = order[0]
+    order.cart_weight = cart_weight
+    order.save()
+    items = order.item_order.all()
+    weight = 0
+    for item in items:
+        weight = weight + item.sku.weight * item.quantity
+    print(weight)
+    if int(cart_weight) == int(weight):
+        return HttpResponse('{1}')
+    else:
+        return HttpResponse('{0}')
