@@ -146,7 +146,9 @@ def verify_weight(request, chip_id, cart_weight):
     for item in items:
         weight = weight + item.sku.weight * item.quantity
     print(weight)
-    if int(cart_weight) == int(weight):
+    top_limit = cart_weight*105/100
+    bot_limit = cart_weight*95/100
+    if bot_limit < weight < top_limit:
         return HttpResponse('{1}')
     else:
         return HttpResponse('{0}')
