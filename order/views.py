@@ -77,7 +77,8 @@ class OrderViewSet(viewsets.ReadOnlyModelViewSet):
 def make_order(request, chip_id):
     chip = Chip.objects.all().filter(tag=chip_id)
     if chip.exists():
-        old_order = Order.objects.all().filter(chip__tag=chip_id, status=OrderStatusOptions.PENDING).order_by('-created')
+        old_order = Order.objects.all().filter(chip__tag=chip_id, status=OrderStatusOptions.PENDING).order_by(
+            '-created')
         new_order = Order(
                 chip=chip[0]
         )
@@ -134,20 +135,22 @@ def add_item(request, chip_id, rf_id):
 
 
 def verify_weight(request, chip_id, cart_weight):
-    order = Order.objects.all().filter(chip=chip_id).order_by('-created')
+    order = Order.objects.all().filter(chip__tag=chip_id).order_by('-created')
     if len(order) == 0:
         return HttpResponse('{-1}')
     order = order[0]
     order.cart_weight = cart_weight
     order.created = datetime.datetime.now()
     order.save()
+
     items = order.item_order.all()
     weight = 0
     for item in items:
         weight = weight + item.sku.weight * item.quantity
-    print(weight)
-    top_limit = cart_weight*105/100
-    bot_limit = cart_weight*95/100
+
+    top_limit = cart_weight * 115 / 100
+    bot_limit = cart_weight * 85 / 100
+
     if bot_limit < weight < top_limit:
         return HttpResponse('{1}')
     else:
